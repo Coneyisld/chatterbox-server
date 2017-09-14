@@ -1,3 +1,9 @@
+var defaultCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10 // Seconds.
+};
 /*************************************************************
 
 You should implement your request handler function in this file.
@@ -27,13 +33,12 @@ exports.requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
-
+  var dataBase = [];
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   // The outgoing status.
-
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
-
+  
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
@@ -48,6 +53,8 @@ exports.requestHandler = function(request, response) {
     } 
     if (request.method === 'POST') {
       statusCode = 201;   
+      var postData = request._postData;
+      dataBase.push(postData);
     } 
   }  
   // .writeHead() writes to the request line and headers of the response,
@@ -61,7 +68,15 @@ exports.requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  var obj = {results: []};
+  console.log(postData);
+
+
+  
+  
+  var obj = {
+    results: [],
+    messages: dataBase
+  };
 
   response.end(JSON.stringify(obj));
 };
@@ -75,10 +90,4 @@ exports.requestHandler = function(request, response) {
 //
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10 // Seconds.
-};
 
